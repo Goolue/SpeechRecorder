@@ -3,7 +3,11 @@ import sys
 import config
 import speech_recognition as sr
 from speech_recognition import Microphone
+import requests
+import datetime
 
+def send_text_to_server(txt: str) -> None:
+    requests.post(config.server_url + ':' + config.server_port)
 
 def listening_callback(recognizer: sr.Recognizer, audio) -> None:
     """
@@ -32,6 +36,7 @@ def listen_continuously() -> None:
 
     # look for the microphone specified in config file
     mics_lst = sr.Microphone.list_microphone_names()
+    print(mics_lst)
     mic = None
     for i, m in enumerate(mics_lst):
         if m == config.mic_name:
@@ -39,10 +44,15 @@ def listen_continuously() -> None:
     if mic is None:
         raise Exception("No microphone can be found!")
 
+    recognizer = sr.Recognizer()
+    print("adjusting to noise for", config.noise_adjustment_time, "sec")
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(duration=config.noise_adjustment_time, source=source)
+
     print("listening!\npress Enter to stop.")
     # stop_listening is a function that when called stops the background listening
-    stop_listening = sr.Recognizer().listen_in_background(mic, callback=listening_callback,
-                                                          phrase_time_limit=config.recognizer_phrase_time_limit)
+    stop_listening = recognizer.listen_in_background(mic, callback=listening_callback,
+                                                     phrase_time_limit=config.recognizer_phrase_time_limit)
     # wait for an input line. this is done tp prevent the script from exiting.
     # on the actual Raspberry pi device, this will most likely not happen because the device will not be connected to a
     # screen or keyboard.
@@ -51,6 +61,8 @@ def listen_continuously() -> None:
     stop_listening(wait_for_stop=False)
 
 
-listen_continuously()
+# listen_continuously()
+
+print(datetime.datetime.now())
 
 print("Bye bye!")
