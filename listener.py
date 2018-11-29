@@ -24,7 +24,7 @@ def listening_callback(recognizer: sr.Recognizer, audio) -> None:
         print("Request error")
 
 
-def start_listening() -> None:
+def listen_continuously() -> None:
     """
     Listen for speech continuously, send each sentence to a speech-to-text converter, then send the text to the server.
     Sentences are detected by pauses in the speech.
@@ -51,6 +51,6 @@ def start_listening() -> None:
     stop_listening(wait_for_stop=False)
 
 
-start_listening()
+listen_continuously()
 
 print("Bye bye!")
