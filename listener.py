@@ -4,10 +4,43 @@ import config
 import speech_recognition as sr
 from speech_recognition import Microphone
 import requests
-import datetime
+import logging
+
+server_url = config.server_url + ':' + config.server_port + '/'
+
+
+def connect_to_server() -> None:
+    if config.send_connection_msg_to_server:
+        body = {"deviceId": config.device_id}
+        try:
+            requests.post(server_url + 'connect', data=body)
+        except Exception as e:
+            logging.error("Could not connect to server {0}, {1}".format(server_url, e))
+            exit(1)
+
 
 def send_text_to_server(txt: str) -> None:
-    requests.post(config.server_url + ':' + config.server_port)
+    body = {"deviceId": config.device_id, "text": txt}
+    try:
+        requests.post(server_url + 'text', data=body)
+    except Exception as e:
+        print("text is:", txt)
+        logging.error("Could not send text to server {0}, {1}".format(server_url, e))
+
+
+def log(msg: str, level: int = logging.INFO, remote: bool = True) -> None:
+    print("logging")
+    {
+        logging.INFO: logging.info,
+        logging.ERROR: logging.error
+    }.get(level, print)(msg)
+    if remote:
+        try:
+            body = {"deviceId": config.device_id, "text": msg, "severity": level}
+            requests.post(server_url + 'log', data=body)
+        except Exception as e:
+            logging.error("Could not log msg {0} remotely to url: {1}. error is: {2}".format(msg, server_url, e))
+
 
 def listening_callback(recognizer: sr.Recognizer, audio) -> None:
     """
@@ -20,12 +53,13 @@ def listening_callback(recognizer: sr.Recognizer, audio) -> None:
         # try to use Google speech recognition to extract the text.
         # the Google one works best (out of the free ones)
         txt = recognizer.recognize_google(audio, language=config.recognizer_lang)
-        print("text is:", txt)
-        # TODO send to server here
+        # print("text is:", txt)
+        log("text is: {0}".format(txt), remote=False)
+        send_text_to_server(txt)
     except sr.UnknownValueError:  # happens if the detected phrase is empty (= silence) or cannot be detected
-        print("Unknown value")
+        log("Unknown value", level=logging.ERROR, remote=False)
     except sr.RequestError:
-        print("Request error")
+        log("Request error", level=logging.ERROR)
 
 
 def listen_continuously() -> None:
@@ -36,20 +70,22 @@ def listen_continuously() -> None:
 
     # look for the microphone specified in config file
     mics_lst = sr.Microphone.list_microphone_names()
-    print(mics_lst)
     mic = None
     for i, m in enumerate(mics_lst):
         if m == config.mic_name:
             mic = Microphone(device_index=i)
     if mic is None:
-        raise Exception("No microphone can be found!")
+        msg = "No microphone can be found!"
+        log(msg, level=logging.ERROR, remote=False)
+        raise Exception(msg)
 
     recognizer = sr.Recognizer()
-    print("adjusting to noise for", config.noise_adjustment_time, "sec")
+    print("adjusting")
+    log("adjusting to noise for {0} sec".format(config.noise_adjustment_time), remote=False)
     with mic as source:
         recognizer.adjust_for_ambient_noise(duration=config.noise_adjustment_time, source=source)
 
-    print("listening!\npress Enter to stop.")
+    log("listening!\npress Enter to stop.", remote=False)
     # stop_listening is a function that when called stops the background listening
     stop_listening = recognizer.listen_in_background(mic, callback=listening_callback,
                                                      phrase_time_limit=config.recognizer_phrase_time_limit)
@@ -57,12 +93,11 @@ def listen_continuously() -> None:
     # on the actual Raspberry pi device, this will most likely not happen because the device will not be connected to a
     # screen or keyboard.
     for _ in sys.stdin:
-        print("stopping recording and speech recognition!")
+        log("stopping recording and speech recognition!", remote=True)
     stop_listening(wait_for_stop=False)
 
 
-# listen_continuously()
-
-print(datetime.datetime.now())
+connect_to_server()
+listen_continuously()
 
 print("Bye bye!")
