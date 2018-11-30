@@ -1,3 +1,5 @@
+connect_to_server = False
+
 mic_name = 'Microsoft LifeCam VX-800: USB Audio (hw:3,0)'  # name of microphone to be used
 # mic_name = 'HDA Intel PCH: ALC3223 Analog (hw:1,0)'  # name of microphone to be used
 

@@ -1,5 +1,4 @@
 import sys
-
 import config
 import speech_recognition as sr
 from speech_recognition import Microphone
