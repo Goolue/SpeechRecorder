@@ -1,5 +1,8 @@
 from listener import listener_utils as utils
 import config
+from logging import INFO as INFO
+
+utils.log("Listener {0}, user: {1} starting!".format(config.device_id, config.user_name), level=INFO, remote=False)
 
 if config.connect_to_server:
     utils.connect_to_server()
