@@ -12,7 +12,18 @@ def printer():
 
 
 @app.route('/text', methods=['POST'])
-def text_get():
+def text_post():
+    print("text")
+    print("headers", request.headers)
+    print("data:", request.data)  # looks like binary
+    print("json:", request.json)  # has right values! use this!
+    print(request.json["deviceId"])
+    return json.dumps(True)
+
+
+@app.route('/connect', methods=['POST'])
+def connect():
+    print("connect")
     print("headers", request.headers)
     print("data:", request.data)  # looks like binary
     print("json:", request.json)  # has right values! use this!
