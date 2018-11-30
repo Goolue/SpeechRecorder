@@ -88,6 +88,7 @@ def listen_continuously() -> None:
 
     # look for the microphone specified in config file
     mics_lst = sr.Microphone.list_microphone_names()
+    print("mic list:", mics_lst)
     mic = None
     for i, m in enumerate(mics_lst):
         if m == config.mic_name:
