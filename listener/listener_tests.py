@@ -8,6 +8,8 @@ import config
 
 from listener import listener_utils as listener
 
+config.is_test = True
+
 speech_txt = 'some text'
 log_txt = 'cannot log this stuff'
 
