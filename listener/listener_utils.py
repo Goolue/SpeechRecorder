@@ -1,4 +1,5 @@
 import sys
+from typing import Callable
 import config
 import speech_recognition as sr
 from speech_recognition import Microphone
@@ -80,7 +81,7 @@ def listening_callback(recognizer: sr.Recognizer, audio) -> None:
         log("Request error", level=logging.ERROR)
 
 
-def listen_continuously() -> None:
+def listen_continuously() -> Callable[[bool], None]:
     """
     Listen for speech continuously, send each sentence to a speech-to-text converter, then send the text to the server.
     Sentences are detected by pauses in the speech.
@@ -108,9 +109,4 @@ def listen_continuously() -> None:
     # stop_listening is a function that when called stops the background listening
     stop_listening = recognizer.listen_in_background(mic, callback=listening_callback,
                                                      phrase_time_limit=config.recognizer_phrase_time_limit)
-    # wait for an input line. this is done tp prevent the script from exiting.
-    # on the actual Raspberry pi device, this will most likely not happen because the device will not be connected to a
-    # screen or keyboard.
-    for _ in sys.stdin:
-        log("stopping recording and speech recognition!", remote=True)
-    stop_listening(wait_for_stop=False)
+    return stop_listening

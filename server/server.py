@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, request
 import json
 
@@ -12,7 +13,9 @@ def printer():
 
 @app.route('/text', methods=['POST'])
 def text_get():
-    print("data:", request.data)
+    print("headers", request.headers)
+    print("data:", request.data)  # looks like binary
+    print("json:", request.json)  # has right values! use this!
     print(request.json["deviceId"])
     return json.dumps(True)
 
