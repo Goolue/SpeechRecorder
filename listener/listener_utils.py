@@ -6,40 +6,59 @@ from speech_recognition import Microphone
 import requests
 import logging
 
+
+def setup_logger() -> logging.Logger:
+    logging.basicConfig(level=logging.DEBUG)
+    log_handler = logging.FileHandler(config.listener_log_file)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    log_handler.setFormatter(formatter)
+    logger_res = logging.getLogger()
+    logger_res.addHandler(log_handler)
+    return logger_res
+
+
 server_url = config.server_url + ':' + config.server_port + '/'
+logger = setup_logger()
 
 
-def connect_to_server() -> None:
-    if config.send_connection_msg_to_server:
-        body = {"deviceId": config.device_id}
-        try:
-            requests.post(server_url + 'connect', data=body)
-        except Exception as e:
-            logging.error("Could not connect to server {0}, {1}".format(server_url, e))
-            exit(1)
+def connect_to_server() -> bool:
+    body = {"deviceId": config.device_id}
+    try:
+        res = requests.post(server_url + 'connect', json=body)
+        return res.text == 'true'
+    except Exception as e:
+        logger.error("Could not connect to server {0}, {1}".format(server_url, e))
+        exit(1)
 
 
-def send_text_to_server(txt: str) -> None:
+def send_text_to_server(txt: str) -> bool:
     body = {"deviceId": config.device_id, "text": txt}
     try:
-        requests.post(server_url + 'text', data=body)
+        log("trying to send text '" + txt + "' to server", remote=False)
+        res = requests.post(server_url + 'text', json=body)
+        return res.text == 'true'
     except Exception as e:
         print("text is:", txt)
-        logging.error("Could not send text to server {0}, {1}".format(server_url, e))
+        logger.error("Could not send text to server {0}, {1}".format(server_url, e))
+        return False
 
 
-def log(msg: str, level: int = logging.INFO, remote: bool = True) -> None:
-    print("logging")
+def log(msg: str, level: int = logging.INFO, remote: bool = True) -> bool:
+    print("logging msg:", msg)
     {
-        logging.INFO: logging.info,
-        logging.ERROR: logging.error
+        logging.INFO: logger.info,
+        logging.ERROR: logger.error
     }.get(level, print)(msg)
-    if remote:
+    if not remote:
+        return True
+    else:
         try:
             body = {"deviceId": config.device_id, "text": msg, "severity": level}
-            requests.post(server_url + 'log', data=body)
+            res = requests.post(server_url + 'log', json=body)
+            return res.text == 'true'
         except Exception as e:
-            logging.error("Could not log msg {0} remotely to url: {1}. error is: {2}".format(msg, server_url, e))
+            logger.error("Could not log msg {0} remotely to url: {1}. error is: {2}".format(msg, server_url, e))
+            return False
 
 
 def listening_callback(recognizer: sr.Recognizer, audio) -> None:
@@ -95,9 +114,3 @@ def listen_continuously() -> None:
     for _ in sys.stdin:
         log("stopping recording and speech recognition!", remote=True)
     stop_listening(wait_for_stop=False)
-
-
-connect_to_server()
-listen_continuously()
-
-print("Bye bye!")
