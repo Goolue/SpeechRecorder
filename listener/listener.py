@@ -1,5 +1,3 @@
-import sys
-
 from listener import listener_utils as utils
 import config
 

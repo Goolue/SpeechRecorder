@@ -44,7 +44,6 @@ def send_text_to_server(txt: str) -> bool:
 
 
 def log(msg: str, level: int = logging.INFO, remote: bool = True) -> bool:
-    print("logging msg:", msg)
     {
         logging.INFO: logger.info,
         logging.ERROR: logger.error
@@ -105,7 +104,7 @@ def listen_continuously() -> Callable[[bool], None]:
     with mic as source:
         recognizer.adjust_for_ambient_noise(duration=config.noise_adjustment_time, source=source)
 
-    log("listening!\npress Enter to stop.", remote=False)
+    log("listening!", remote=True)
     # stop_listening is a function that when called stops the background listening
     stop_listening = recognizer.listen_in_background(mic, callback=listening_callback,
                                                      phrase_time_limit=config.recognizer_phrase_time_limit)
