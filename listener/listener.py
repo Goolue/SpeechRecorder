@@ -1,5 +1,4 @@
 import config
-from typing import Callable
 import config
 import speech_recognition as sr
 from speech_recognition import Microphone
@@ -21,7 +20,7 @@ server_url = config.server_url + ':' + config.server_port + '/'
 logger = setup_logger()
 
 
-def connect_to_server() -> bool:
+def connect_to_server():
     body = {"deviceId": config.device_id}
     try:
         res = requests.post(server_url + 'connect', json=body)
@@ -31,7 +30,7 @@ def connect_to_server() -> bool:
         exit(1)
 
 
-def send_text_to_server(txt: str) -> bool:
+def send_text_to_server(txt: str):
     body = {"deviceId": config.device_id, "text": txt}
     try:
         log("trying to send text '" + txt + "' to server", remote=False)
@@ -43,7 +42,7 @@ def send_text_to_server(txt: str) -> bool:
         return False
 
 
-def log(msg: str, level: int = logging.INFO, remote: bool = True) -> bool:
+def log(msg: str, level: int = logging.INFO, remote: bool = True):
     {
         logging.INFO: logger.info,
         logging.ERROR: logger.error
@@ -60,7 +59,7 @@ def log(msg: str, level: int = logging.INFO, remote: bool = True) -> bool:
             return False
 
 
-def listening_callback(recognizer: sr.Recognizer, audio) -> None:
+def listening_callback(recognizer: sr.Recognizer, audio):
     """
     Callback to be called when a phrase was recorded
     :param recognizer: sr.Recognizer to be used
@@ -80,7 +79,7 @@ def listening_callback(recognizer: sr.Recognizer, audio) -> None:
         log("Request error", level=logging.ERROR)
 
 
-def listen_continuously() -> Callable[[bool], None]:
+def listen_continuously():
     """
     Listen for speech continuously, send each sentence to a speech-to-text converter, then send the text to the server.
     Sentences are detected by pauses in the speech.
