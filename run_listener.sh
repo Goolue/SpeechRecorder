@@ -1,3 +1,5 @@
 cd /home/pi/programming/SpeechRecorder
+echo "present working dir is:"
 pwd | cat
-bash -c "source activate sl && python -m listener.listener"
+echo "running the script now!"
+python -m listener.listener
