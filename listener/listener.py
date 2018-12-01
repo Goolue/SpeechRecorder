@@ -7,7 +7,7 @@ import requests
 import logging
 
 
-def setup_logger() -> logging.Logger:
+def setup_logger():
     logging.basicConfig(level=logging.DEBUG)
     log_handler = logging.FileHandler(config.listener_log_file)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
