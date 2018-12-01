@@ -119,8 +119,13 @@ if not config.is_test:
     # wait for an input line. this is done tp prevent the script from exiting.
     # on the actual Raspberry pi device, this will most likely not happen because the device will not be connected to a
     # screen or keyboard.
-    input("Press Enter to stop...")
-    log("stopping recording and speech recognition!", remote=False)
-    stop_listening(True)
 
-    print("Bye bye!")
+
+    # input("Press Enter to stop...")
+    # log("stopping recording and speech recognition!", remote=False)
+    # stop_listening(True)
+    #
+    # print("Bye bye!")
+
+    while True:
+        pass
