@@ -42,7 +42,7 @@ def send_text_to_server(txt):
         return False
 
 
-def log(msg, level, remote=True):
+def log(msg, level=logging.INFO, remote=True):
     {
         logging.INFO: logger.info,
         logging.ERROR: logger.error
