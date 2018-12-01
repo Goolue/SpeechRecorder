@@ -30,7 +30,7 @@ def connect_to_server():
         exit(1)
 
 
-def send_text_to_server(txt: str):
+def send_text_to_server(txt):
     body = {"deviceId": config.device_id, "text": txt}
     try:
         log("trying to send text '" + txt + "' to server", remote=False)
@@ -42,7 +42,7 @@ def send_text_to_server(txt: str):
         return False
 
 
-def log(msg: str, level: int = logging.INFO, remote: bool = True):
+def log(msg, level, remote=True):
     {
         logging.INFO: logger.info,
         logging.ERROR: logger.error
@@ -59,7 +59,7 @@ def log(msg: str, level: int = logging.INFO, remote: bool = True):
             return False
 
 
-def listening_callback(recognizer: sr.Recognizer, audio):
+def listening_callback(recognizer, audio):
     """
     Callback to be called when a phrase was recorded
     :param recognizer: sr.Recognizer to be used
