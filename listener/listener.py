@@ -1,4 +1,3 @@
-import config
 from typing import Callable
 import config
 import speech_recognition as sr
@@ -71,7 +70,6 @@ def listening_callback(recognizer: sr.Recognizer, audio) -> None:
         # try to use Google speech recognition to extract the text.
         # the Google one works best (out of the free ones)
         txt = recognizer.recognize_google(audio, language=config.recognizer_lang)
-        # print("text is:", txt)
         log("text is: {0}".format(txt), remote=False)
         send_text_to_server(txt)
     except sr.UnknownValueError:  # happens if the detected phrase is empty (= silence) or cannot be detected
@@ -88,7 +86,6 @@ def listen_continuously() -> Callable[[bool], None]:
 
     # look for the microphone specified in config file
     mics_lst = sr.Microphone.list_microphone_names()
-    print("mic list:", mics_lst)
     mic = None
     for i, m in enumerate(mics_lst):
         if m == config.mic_name:
@@ -99,7 +96,6 @@ def listen_continuously() -> Callable[[bool], None]:
         raise Exception(msg)
 
     recognizer = sr.Recognizer()
-    print("adjusting")
     log("adjusting to noise for {0} sec".format(config.noise_adjustment_time), remote=False)
     with mic as source:
         recognizer.adjust_for_ambient_noise(duration=config.noise_adjustment_time, source=source)
@@ -117,16 +113,7 @@ if not config.is_test:
     if config.connect_to_server:
         connect_to_server()
     stop_listening = listen_continuously()
-    # wait for an input line. this is done tp prevent the script from exiting.
-    # on the actual Raspberry pi device, this will most likely not happen because the device will not be connected to a
-    # screen or keyboard.
 
-
-    # input("Press Enter to stop...")
-    # log("stopping recording and speech recognition!", remote=False)
-    # stop_listening(True)
-    #
-    # print("Bye bye!")
-
+    # run infinitely
     while True:
         pass

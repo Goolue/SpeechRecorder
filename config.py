@@ -1,4 +1,4 @@
-connect_to_server = True
+connect_to_server = True  # True -> send connection msg to server
 is_test = False
 
 mic_name = 'Microsoft LifeCam VX-800: USB Audio (hw:1,0)'  # name of microphone to be used
@@ -6,7 +6,7 @@ mic_name = 'Microsoft LifeCam VX-800: USB Audio (hw:1,0)'  # name of microphone 
 
 recognizer_lang = 'he'  # speech language to use
 recognizer_phrase_time_limit = 10  # maximum number of seconds a sentence can be
-noise_adjustment_time = 0
+noise_adjustment_time = 3
 
 # server parameter configs
 server_url = 'http://192.168.1.6'
