@@ -1,4 +1,3 @@
 cd /home/pi/programming/SpeechRecorder
 pwd | cat
-source activate sl
-python -m listener.listener
+bash -c "source activate sl && python -m listener.listener"
