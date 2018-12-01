@@ -1,14 +1,14 @@
+import config
 import json
 import logging
 import unittest
-
 from httmock import HTTMock, urlmatch
 from requests import PreparedRequest
-import config
-
-from listener import listener_utils as listener
 
 config.is_test = True
+
+from listener import listener
+
 
 speech_txt = 'some text'
 log_txt = 'cannot log this stuff'
