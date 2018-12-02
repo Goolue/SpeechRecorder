@@ -13,7 +13,7 @@
 
 | Method        | URL         | Body (json) example  					                    | Description                                                                      | Response example
 | ------------- |:------------| -----: 							  			                    | ---: 		                                                                       | ---: 
-|DELETE         | /text 	  | {"deviceId": 1, "date": "2018-11-29 12:46:49.256393"}           | delete all text sent by a device on a specific date                              | "True"
+|DELETE         | /text 	  | deviceId=1, date=2018-11-29							            | delete all text sent by a device on a specific date                              | "True"
 |GET  			| /text       | deviceId=1, date=2018-11-29	    								| get all speech as text for a specific device at a specific date (concatenated)   | "a lot of speech"
 |GET  			| /devices    | 								                    			| get a dictionary of deviceId -> last connection date                             | {1: "2018-11-29 12:46:49.256393"}
 
