@@ -9,8 +9,8 @@ recognizer_phrase_time_limit = 10  # maximum number of seconds a sentence can be
 noise_adjustment_time = 3
 
 # server parameter configs
-# server_url = 'http://132.72.23.63'
-server_url = 'http://132.73.207.195'
+server_url = 'http://132.72.23.63'
+# server_url = 'http://132.73.207.195'
 # server_port = '3002'
 server_port = '3001'
 # server_port = '5000'
